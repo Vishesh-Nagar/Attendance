@@ -1,9 +1,8 @@
 import React from 'react';
 
-
 function Title() {
     return (
-        <h1>Attendance Tracker</h1>
+        <h1>ClassTrack</h1>
     );
 }
 

@@ -1,0 +1,6 @@
+.MainContentWrapper {
+    background-color: rgb(87, 85, 82);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

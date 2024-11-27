@@ -1,52 +1,92 @@
-import React, { useState, useEffect } from 'react';
-import { getSubjects, saveSubjects } from '../Data/Data';
-import AddSubject from '../AddSubjectForm/AddSubject';
-import '../Subject/Subject';
-import Faculty from '../../assets/Faculty.jpg';
+import React, { useState, useEffect } from "react";
+import { getSubjects, saveSubjects } from "../Data/Data";
+import "./MainContent.css";
+import AddSubject from "../AddSubjectForm/AddSubject";
 
 function MainContent() {
-  const [subjects, setSubjects] = useState([]);
+    const [subjects, setSubjects] = useState([]);
 
-  useEffect(() => {
-    setSubjects(getSubjects());
-  }, []);
+    useEffect(() => {
+        setSubjects(getSubjects());
+    }, []);
 
-  const addSubject = (newSubject) => {
-    const updatedSubjects = [...subjects, { ...newSubject, attendance: 0 }];
-    setSubjects(updatedSubjects);
-    saveSubjects(updatedSubjects);
-  };
+    const addSubject = (newSubject) => {
+        const updatedSubjects = [
+            ...subjects,
+            { ...newSubject, present: 0, absent: 0 },
+        ];
+        setSubjects(updatedSubjects);
+        saveSubjects(updatedSubjects);
+    };
 
-  const addAttendance = (index) => {
-    const updatedSubjects = [...subjects];
-    updatedSubjects[index].attendance = (updatedSubjects[index].attendance || 0) + 1;
-    setSubjects(updatedSubjects);
-    saveSubjects(updatedSubjects);
-  };
+    const markPresent = (index) => {
+        const updatedSubjects = [...subjects];
+        updatedSubjects[index].present += 1;
+        setSubjects(updatedSubjects);
+        saveSubjects(updatedSubjects);
+    };
 
-  return (
-    <div className="container">
-      <div className="form-box">
-        <AddSubject addSubject={addSubject} />
-      </div>
-      <div className="subjects">
-        {subjects.map((subject, index) => (
-          <div className="subject-card" key={index}>
-            <img className="faculty-image" src={Faculty} alt="Faculty" />
-            <h3 className="subject-title">{subject.title}</h3>
-            <p className="faculty">Faculty: {subject.faculty}</p>
-            <p>Attendance: {subject.attendance || 0}</p>
-            <p className="total-classes">Total Classes: {subject.totalClasses}</p>
-            <button className='attendance-button' onClick={() => addAttendance(index)}>Add Attendance</button>
-            <div className="progress-bar">
-              <progress value={(subject.attendance || 0) / subject.totalClasses * 100} max="100"></progress>
-              <span className="percentage">{((subject.attendance || 0) / subject.totalClasses * 100).toFixed(2)}%</span>
+    const markAbsent = (index) => {
+        const updatedSubjects = [...subjects];
+        updatedSubjects[index].absent += 1;
+        setSubjects(updatedSubjects);
+        saveSubjects(updatedSubjects);
+    };
+
+    return (
+        <div className="container">
+            <div className="form-box">
+                <AddSubject addSubject={addSubject} />
             </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+
+            <div className="subjects">
+                {subjects.map((subject, index) => {
+                    const totalClasses = subject.present + subject.absent;
+                    const percentage =
+                        totalClasses > 0
+                            ? (subject.present / totalClasses) * 100
+                            : 0;
+
+                    const progressClass =
+                        percentage >= 75 ? "sufficient" : "low";
+
+                    return (
+                        <div className="subject-card" key={index}>
+                            <h3 className="subject-title">{subject.title}</h3>
+                            <p className="faculty">
+                                Faculty: {subject.faculty}
+                            </p>
+                            <p>Total Classes: {totalClasses}</p>
+                            <p>Present: {subject.present}</p>
+                            <p>Absent: {subject.absent}</p>
+                            <button
+                                className="attendance-button-present"
+                                onClick={() => markPresent(index)}
+                            >
+                                Present
+                            </button>
+                            <button
+                                className="attendance-button-absent"
+                                onClick={() => markAbsent(index)}
+                            >
+                                Absent
+                            </button>
+                            <div className="progress-bar">
+                                <progress
+                                    value={percentage || 0}
+                                    max="100"
+                                    className={progressClass}
+                                ></progress>
+                                <span className="percentage">
+                                    {percentage.toFixed(2)}%
+                                </span>
+                            </div>
+                        </div>
+                    );
+                })}
+            </div>
+        </div>
+    );
 }
 
 export default MainContent;
