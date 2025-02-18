@@ -1,22 +1,72 @@
+/* Container */
 .container {
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 20px;
-    background-color: rgb(87, 85, 82);
+    background-color: #1e1e1e;
     min-height: 100vh;
 }
 
+/* Form Box */
 .form-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     margin-bottom: 20px;
-    width: 250px;
-    height: 180px;
-    max-width: 600px;
-    background-color: #ededed;
+    width: 280px;
+    background-color: #3b444b;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    padding: 20px;
+    padding: 5px;
 }
+
+/* Button Container - Keeps Add & Cancel Buttons Side-by-Side */
+.button-container {
+    display: flex;
+    gap: 5px; /* Reduced from 10px to 5px */
+    justify-content: center;
+    width: 100%;
+    margin-top: 10px;
+}
+
+
+/* Add Subject Button */
+.add-subject-button {
+    background-color: #4CAF50;
+    color: #FFFFFF;
+    padding: 12px 18px;
+    border-radius: 8px;
+    font-size: 16px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.2s ease;
+}
+
+.add-subject-button:hover {
+    background-color: #388E3C;
+}
+
+/* Cancel Button */
+.cancel-button {
+    background-color: #DC3545;
+    color: #FFFFFF;
+    padding: 10px 15px;
+    border-radius: 8px;
+    margin-top: 3px;
+    font-size: 16px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.2s ease;
+}
+
+.cancel-button:hover {
+    background-color: #A71D2A;
+}
+
 
 .subjects {
     display: flex;
@@ -30,7 +80,7 @@
 }
 
 .subject-card {
-    background-color: #ededed;
+    background-color: #2A2A2A;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     padding: 15px;
@@ -49,13 +99,13 @@
 .subject-title {
     font-size: 18px;
     font-weight: bold;
-    color: #333333;
+    color:white;
     margin: 10px 0;
 }
 
 .faculty {
     font-size: 14px;
-    color: #555555;
+    color:white;
     margin-bottom: 10px;
 }
 
@@ -72,7 +122,7 @@
 }
 
 .attendance-button-absent {
-    background-color: #e86d6d;
+    background-color: #DC3545;
     color: #ffffff;
     border: none;
     padding: 10px 15px;
@@ -90,7 +140,7 @@
 .subject-card p {
     font-size: 14px;
     margin: 5px 0;
-    color: #666666;
+    color:white;
 }
 .progress-bar {
     display: flex;
@@ -121,12 +171,12 @@ progress.low::-webkit-progress-value {
 }
 
 progress.sufficient::-webkit-progress-value {
-    background-color: #28a745;
+    background-color: #4CAF50;
     border-radius: 4px;
 }
 
 .percentage {
     font-size: 14px;
-    color: #333333;
+    color:white;
     margin-top: 5px;
 }

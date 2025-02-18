@@ -5,6 +5,7 @@ import AddSubject from "../AddSubjectForm/AddSubject";
 
 function MainContent() {
     const [subjects, setSubjects] = useState([]);
+    const [showForm, setShowForm] = useState(false); // State to control form visibility
 
     useEffect(() => {
         setSubjects(getSubjects());
@@ -17,6 +18,11 @@ function MainContent() {
         ];
         setSubjects(updatedSubjects);
         saveSubjects(updatedSubjects);
+        setShowForm(false); // Hide the form after submission
+    };
+
+    const cancelForm = () => {
+        setShowForm(false); // Hide the form when cancel is clicked
     };
 
     const markPresent = (index) => {
@@ -35,9 +41,25 @@ function MainContent() {
 
     return (
         <div className="container">
-            <div className="form-box">
-                <AddSubject addSubject={addSubject} />
-            </div>
+            {/* Show the button to add a subject */}
+            {!showForm && (
+                <button className="add-subject-button" onClick={() => setShowForm(true)}>
+                    Add Subject
+                </button>
+            )}
+
+            {/* Conditionally show the AddSubject form with a Cancel button */}
+            {showForm && (
+                <div className="form-box">
+                    <AddSubject addSubject={addSubject} />
+                    <div className="button-container">
+                        <button className="cancel-button" onClick={cancelForm}>
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            )}
+
 
             <div className="subjects">
                 {subjects.map((subject, index) => {
