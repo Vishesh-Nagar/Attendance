@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { getSubjects, saveSubjects } from "../Data/Data";
-import "./MainContent.css";
 import AddSubject from "../AddSubjectForm/AddSubject";
+import Subject from "../Subject/Subject";
 
 function MainContent() {
     const [subjects, setSubjects] = useState([]);
-    const [showForm, setShowForm] = useState(false); // State to control form visibility
+    const [isFormVisible, setIsFormVisible] = useState(false);
 
     useEffect(() => {
         setSubjects(getSubjects());
@@ -18,11 +18,15 @@ function MainContent() {
         ];
         setSubjects(updatedSubjects);
         saveSubjects(updatedSubjects);
-        setShowForm(false); // Hide the form after submission
+        setIsFormVisible(false);
     };
 
-    const cancelForm = () => {
-        setShowForm(false); // Hide the form when cancel is clicked
+    const handleCancel = () => {
+        setIsFormVisible(false);
+    };
+
+    const handleShowForm = () => {
+        setIsFormVisible(true);
     };
 
     const markPresent = (index) => {
@@ -39,29 +43,32 @@ function MainContent() {
         saveSubjects(updatedSubjects);
     };
 
+    const deleteSubject = (index) => {
+        const updatedSubjects = subjects.filter((_, i) => i !== index);
+        setSubjects(updatedSubjects);
+        saveSubjects(updatedSubjects);
+    };
+
     return (
-        <div className="container">
-            {/* Show the button to add a subject */}
-            {!showForm && (
-                <button className="add-subject-button" onClick={() => setShowForm(true)}>
+        <div className="flex flex-col items-center p-5 bg-zinc-800 min-h-screen">
+            {isFormVisible ? (
+                <div className="flex flex-col items-center justify-center mb-5 w-[220px] bg-gray-700 rounded-lg shadow-md p-4 border border-gray-300">
+                    <AddSubject
+                        addSubject={addSubject}
+                        onCancel={handleCancel}
+                    />
+                </div>
+            ) : (
+                <button
+                    onClick={handleShowForm}
+                    className="px-4 py-2.5 bg-green-500 text-white rounded hover:bg-green-600 transition mb-5"
+                >
                     Add Subject
                 </button>
             )}
+            <hr className="w-[90%] border-t border-gray-400 mt-2 mb-1" />
 
-            {/* Conditionally show the AddSubject form with a Cancel button */}
-            {showForm && (
-                <div className="form-box">
-                    <AddSubject addSubject={addSubject} />
-                    <div className="button-container">
-                        <button className="cancel-button" onClick={cancelForm}>
-                            Cancel
-                        </button>
-                    </div>
-                </div>
-            )}
-
-
-            <div className="subjects">
+            <div className="flex flex-wrap justify-center items-start gap-5 w-full max-w-[900px] mt-5">
                 {subjects.map((subject, index) => {
                     const totalClasses = subject.present + subject.absent;
                     const percentage =
@@ -69,41 +76,19 @@ function MainContent() {
                             ? (subject.present / totalClasses) * 100
                             : 0;
 
-                    const progressClass =
-                        percentage >= 75 ? "sufficient" : "low";
-
                     return (
-                        <div className="subject-card" key={index}>
-                            <h3 className="subject-title">{subject.title}</h3>
-                            <p className="faculty">
-                                Faculty: {subject.faculty}
-                            </p>
-                            <p>Total Classes: {totalClasses}</p>
-                            <p>Present: {subject.present}</p>
-                            <p>Absent: {subject.absent}</p>
-                            <button
-                                className="attendance-button-present"
-                                onClick={() => markPresent(index)}
-                            >
-                                Present
-                            </button>
-                            <button
-                                className="attendance-button-absent"
-                                onClick={() => markAbsent(index)}
-                            >
-                                Absent
-                            </button>
-                            <div className="progress-bar">
-                                <progress
-                                    value={percentage || 0}
-                                    max="100"
-                                    className={progressClass}
-                                ></progress>
-                                <span className="percentage">
-                                    {percentage.toFixed(2)}%
-                                </span>
-                            </div>
-                        </div>
+                        <Subject
+                            key={index}
+                            title={subject.title}
+                            faculty={subject.faculty}
+                            present={subject.present}
+                            absent={subject.absent}
+                            totalClasses={totalClasses}
+                            percentage={percentage}
+                            markPresent={() => markPresent(index)}
+                            markAbsent={() => markAbsent(index)}
+                            handleDelete={() => deleteSubject(index)}
+                        />
                     );
                 })}
             </div>

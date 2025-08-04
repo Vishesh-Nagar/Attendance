@@ -1,3 +1,3 @@
-body {
-    font-family: 'Ariel', sans-serif;
-}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
