@@ -15,13 +15,18 @@ function MainContent() {
             const loaded = await getSubjects();
             if (mounted) setSubjects(loaded || []);
         })();
-        return () => { mounted = false; };
+        return () => {
+            mounted = false;
+        };
     }, []);
 
     const checkAuth = useCallback(async () => {
         try {
-            const BACKEND = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000';
-            const res = await fetch(`${BACKEND}/api/me/`, { credentials: 'include' });
+            const BACKEND =
+                import.meta.env.VITE_BACKEND_URL || "http://localhost:8000";
+            const res = await fetch(`${BACKEND}/api/me/`, {
+                credentials: "include",
+            });
             if (!res.ok) return setAuth({ authenticated: false });
             const data = await res.json();
             setAuth(data);
@@ -30,7 +35,9 @@ function MainContent() {
         }
     }, []);
 
-    useEffect(() => { checkAuth(); }, [checkAuth]);
+    useEffect(() => {
+        checkAuth();
+    }, [checkAuth]);
 
     useEffect(() => {
         const handler = (e) => {
@@ -47,8 +54,8 @@ function MainContent() {
             }
             setAuth(detail);
         };
-        window.addEventListener('authChanged', handler);
-        return () => window.removeEventListener('authChanged', handler);
+        window.addEventListener("authChanged", handler);
+        return () => window.removeEventListener("authChanged", handler);
     }, []);
 
     const addSubject = (newSubject) => {
@@ -56,13 +63,13 @@ function MainContent() {
             ...subjects,
             { ...newSubject, present: 0, absent: 0 },
         ];
-    setSubjects(updatedSubjects);
-    (async () => {
-        const saved = await saveSubjects(updatedSubjects).catch(() => null);
-        if (saved && Array.isArray(saved)) {
-            setSubjects(saved);
-        }
-    })();
+        setSubjects(updatedSubjects);
+        (async () => {
+            const saved = await saveSubjects(updatedSubjects).catch(() => null);
+            if (saved && Array.isArray(saved)) {
+                setSubjects(saved);
+            }
+        })();
         setIsFormVisible(false);
     };
 
@@ -81,7 +88,9 @@ function MainContent() {
 
         const id = updatedSubjects[index].id;
         if (id) {
-            const patched = await patchSubject(id, { present: updatedSubjects[index].present });
+            const patched = await patchSubject(id, {
+                present: updatedSubjects[index].present,
+            });
             if (!patched) saveSubjects(updatedSubjects).catch(() => {});
         } else {
             saveSubjects(updatedSubjects).catch(() => {});
@@ -95,7 +104,9 @@ function MainContent() {
 
         const id = updatedSubjects[index].id;
         if (id) {
-            const patched = await patchSubject(id, { absent: updatedSubjects[index].absent });
+            const patched = await patchSubject(id, {
+                absent: updatedSubjects[index].absent,
+            });
             if (!patched) saveSubjects(updatedSubjects).catch(() => {});
         } else {
             saveSubjects(updatedSubjects).catch(() => {});
@@ -110,8 +121,10 @@ function MainContent() {
 
     if (!auth.authenticated) {
         return (
-            <div className="flex flex-col items-center p-5 bg-zinc-800 min-h-screen text-white">
-                <div className="text-xl">Please sign in to manage attendance.</div>
+            <div className="flex flex-col justify-center items-center min-h-screen bg-zinc-800 text-white p-5">
+                <div className="text-xl text-center">
+                    Please sign in to manage your attendance.
+                </div>
             </div>
         );
     }

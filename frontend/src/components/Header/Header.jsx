@@ -32,10 +32,7 @@ function Header() {
     };
 
     return (
-        <div className="sticky top-0 w-full bg-zinc-900 shadow-md z-50 flex items-center justify-between p-4">
-            {/* Left Spacer */}
-            <div className="w-24"></div>
-
+        <div className="sticky top-0 w-full bg-zinc-900 shadow-md z-0 flex justify-center p-4">
             {/* Center: Logo + Title */}
             <div className="flex items-center gap-3">
                 <Logo />
@@ -44,13 +41,13 @@ function Header() {
                 </h1>
             </div>
 
-            {/* Right: Auth Buttons */}
-            <div className="flex items-center gap-3">
+            {/* Right: Auth Buttons (floating) */}
+            <div className="absolute top-4 right-4 z-10 flex items-center gap-3">
                 {auth.authenticated ? (
-                    <>
-                        <div className="text-white">{auth.username}</div>
+                    <div className="flex items-center gap-2 bg-zinc-800 px-3 py-1 rounded shadow-lg">
+                        <span className="text-white">Welcome, {auth.username}</span>
                         <button onClick={handleLogout} className="px-3 py-1 bg-red-500 text-white rounded">Logout</button>
-                    </>
+                    </div>
                 ) : (
                     <>
                         <button onClick={() => { setFormMode('login'); setShowForm(true); }} className="px-3 py-1 bg-green-500 text-white rounded">Login</button>

@@ -18,6 +18,17 @@ function AuthForm({ mode = "login", onSuccess, onClose }) {
     const submit = async (e) => {
         e.preventDefault();
         setError(null);
+
+        // Validation checks
+        if (mode === "signup" && !email.endsWith("@gmail.com")) {
+            setError("Email must end with @gmail.com");
+            return;
+        }
+        if (password.length < 6) {
+            setError("Password must be at least 6 characters long");
+            return;
+        }
+
         try {
             const hashedPassword = await hashPassword(password);
             const url =
@@ -48,10 +59,10 @@ function AuthForm({ mode = "login", onSuccess, onClose }) {
     };
 
     return (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50 text-center">
             <form
                 onSubmit={submit}
-                className="bg-gray-800 text-white p-6 rounded shadow-lg w-80"
+                className="bg-gray-800 text-white p-6 rounded shadow-lg w-auto"
             >
                 <h3 className="text-xl mb-3">
                     {mode === "signup" ? "Sign up" : "Log in"}
@@ -64,12 +75,14 @@ function AuthForm({ mode = "login", onSuccess, onClose }) {
                         onChange={(e) => setEmail(e.target.value)}
                     />
                 )}
+                <br />
                 <input
                     className="w-full p-2 mb-2 text-black"
                     placeholder="Username"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                 />
+                <br />
                 <input
                     className="w-full p-2 mb-2 text-black"
                     placeholder="Password"
@@ -78,19 +91,19 @@ function AuthForm({ mode = "login", onSuccess, onClose }) {
                     onChange={(e) => setPassword(e.target.value)}
                 />
                 {error && <div className="text-red-400 mb-2">{error}</div>}
-                <div className="flex justify-end gap-2">
+                <div className="flex justify-center mt-2 gap-2 items-center text-center">
+                    <button
+                        type="submit"
+                        className="px-3 py-1 bg-green-500 rounded"
+                    >
+                        {mode === "signup" ? "Sign up" : "Log in"}
+                    </button>
                     <button
                         type="button"
                         onClick={onClose}
                         className="px-3 py-1 bg-gray-600 rounded"
                     >
                         Cancel
-                    </button>
-                    <button
-                        type="submit"
-                        className="px-3 py-1 bg-green-500 rounded"
-                    >
-                        {mode === "signup" ? "Sign up" : "Log in"}
                     </button>
                 </div>
             </form>
