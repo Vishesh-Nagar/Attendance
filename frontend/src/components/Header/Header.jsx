@@ -8,7 +8,7 @@ function Header() {
     const [showForm, setShowForm] = useState(false);
     const [formMode, setFormMode] = useState('login');
 
-    const BACKEND = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000';
+    const BACKEND = process.env.VITE_BACKEND_URL || 'http://localhost:8000';
 
     const checkAuth = async () => {
         try {

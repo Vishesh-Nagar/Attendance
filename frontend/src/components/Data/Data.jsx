@@ -1,4 +1,4 @@
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000';
+const BACKEND_URL = process.env.VITE_BACKEND_URL || 'http://localhost:8000';
 
 export const getSubjects = async () => {
     // Try fetching from backend first

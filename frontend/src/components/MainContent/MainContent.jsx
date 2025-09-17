@@ -20,7 +20,7 @@ function MainContent() {
 
     const checkAuth = useCallback(async () => {
         try {
-            const BACKEND = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000';
+            const BACKEND = process.env.VITE_BACKEND_URL || 'http://localhost:8000';
             const res = await fetch(`${BACKEND}/api/me/`, { credentials: 'include' });
             if (!res.ok) return setAuth({ authenticated: false });
             const data = await res.json();
