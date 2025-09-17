@@ -6,7 +6,7 @@ function AuthForm({ mode = 'login', onSuccess, onClose }) {
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
 
-  const BACKEND = process.env.VITE_BACKEND_URL || 'http://localhost:8000';
+  const BACKEND = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000';
 
   const submit = async (e) => {
     e.preventDefault();
