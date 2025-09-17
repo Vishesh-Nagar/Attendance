@@ -15,24 +15,10 @@ function AuthForm({ mode = "login", onSuccess, onClose }) {
 
     const BACKEND = import.meta.env.VITE_BACKEND_URL || "http://localhost:8000";
 
-    const getCsrfToken = () => {
-        return document.cookie
-            .split("; ")
-            .find((row) => row.startsWith("csrftoken="))
-            ?.split("=")[1];
-    };
-
-    const ensureCsrfCookie = async () => {
-        await fetch(`${BACKEND}/api/csrf/`, { credentials: "include" });
-    };
-
     const submit = async (e) => {
         e.preventDefault();
         setError(null);
         try {
-            await ensureCsrfCookie();
-            const csrfToken = getCsrfToken();
-
             const hashedPassword = await hashPassword(password);
             const url =
                 mode === "signup"
@@ -45,19 +31,14 @@ function AuthForm({ mode = "login", onSuccess, onClose }) {
 
             const res = await fetch(url, {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRFToken": csrfToken || "",
-                },
+                headers: { "Content-Type": "application/json" },
                 credentials: "include",
                 body: JSON.stringify(body),
             });
-
             if (!res.ok) {
                 const txt = await res.text();
                 throw new Error(txt || "Auth failed");
             }
-
             const data = await res.json();
             onSuccess && onSuccess(data);
             onClose && onClose();
