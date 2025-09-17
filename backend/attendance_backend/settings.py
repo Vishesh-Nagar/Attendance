@@ -74,6 +74,7 @@ STATIC_URL = '/static/'
 # CORS configuration for local frontend (Vite default)
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:5173',
+    'https://attendance-three-gray.vercel.app/'
 ]
 
 CORS_ALLOW_CREDENTIALS = True
