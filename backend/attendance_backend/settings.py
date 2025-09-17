@@ -7,7 +7,11 @@ SECRET_KEY = 'changeme-in-dev'
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'attendance-ngic.onrender.com']
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+    'attendance-ngic.onrender.com',
+]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -21,7 +25,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',  # must be very high, ideally 1st
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -50,7 +54,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'attendance_backend.wsgi.application'
 
-# SQLite database
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -58,7 +61,6 @@ DATABASES = {
     }
 }
 
-# Optionally configure database from DATABASE_URL (useful for hosting providers)
 if os.environ.get('DATABASE_URL'):
     try:
         import dj_database_url
@@ -68,13 +70,10 @@ if os.environ.get('DATABASE_URL'):
 
 STATIC_URL = '/static/'
 
-# legacy CSV path (kept for backwards compatibility)
-# DATA_CSV = os.path.join(BASE_DIR, 'data.csv')
-
-# CORS configuration for local frontend (Vite default)
+# ---------------- CORS CONFIG ----------------
 CORS_ALLOWED_ORIGINS = [
-    'http://localhost:5173',
-    'https://attendance-three-gray.vercel.app'
+    "http://localhost:5173",
+    "https://attendance-three-gray.vercel.app",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
