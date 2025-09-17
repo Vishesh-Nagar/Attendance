@@ -9,11 +9,10 @@ function Subject({
     percentage,
     markPresent,
     markAbsent,
-    facultyImage,
     handleDelete,
 }) {
     return (
-        <div className="border border-gray-300 m-2.5 rounded-lg shadow-md bg-gray-700 w-[220px] h-[250px] flex flex-col items-center p-4 text-white overflow-hidden relative">
+        <div className="border border-gray-300 m-2.5 rounded-lg shadow-md bg-gray-700 w-[220px] h-[300px] flex flex-col items-center p-4 text-white overflow-hidden relative">
             <button
                 onClick={handleDelete}
                 className="absolute top-1 right-1 px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition text-xs z-10"

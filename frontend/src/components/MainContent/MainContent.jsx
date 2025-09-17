@@ -1,14 +1,54 @@
 import { useState, useEffect } from "react";
-import { getSubjects, saveSubjects } from "../Data/Data";
+import { getSubjects, saveSubjects, patchSubject } from "../Data/Data";
 import AddSubject from "../AddSubjectForm/AddSubject";
 import Subject from "../Subject/Subject";
+import { useCallback } from "react";
 
 function MainContent() {
     const [subjects, setSubjects] = useState([]);
     const [isFormVisible, setIsFormVisible] = useState(false);
+    const [auth, setAuth] = useState({ authenticated: false });
 
     useEffect(() => {
-        setSubjects(getSubjects());
+        let mounted = true;
+        (async () => {
+            const loaded = await getSubjects();
+            if (mounted) setSubjects(loaded || []);
+        })();
+        return () => { mounted = false; };
+    }, []);
+
+    const checkAuth = useCallback(async () => {
+        try {
+            const BACKEND = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000';
+            const res = await fetch(`${BACKEND}/api/me/`, { credentials: 'include' });
+            if (!res.ok) return setAuth({ authenticated: false });
+            const data = await res.json();
+            setAuth(data);
+        } catch (e) {
+            setAuth({ authenticated: false });
+        }
+    }, []);
+
+    useEffect(() => { checkAuth(); }, [checkAuth]);
+
+    useEffect(() => {
+        const handler = (e) => {
+            const detail = e?.detail || {};
+            if (detail.authenticated) {
+                // reload subjects from server when logged in
+                (async () => {
+                    const loaded = await getSubjects();
+                    setSubjects(loaded || []);
+                })();
+            } else {
+                // clear subjects when logged out
+                setSubjects([]);
+            }
+            setAuth(detail);
+        };
+        window.addEventListener('authChanged', handler);
+        return () => window.removeEventListener('authChanged', handler);
     }, []);
 
     const addSubject = (newSubject) => {
@@ -16,8 +56,13 @@ function MainContent() {
             ...subjects,
             { ...newSubject, present: 0, absent: 0 },
         ];
-        setSubjects(updatedSubjects);
-        saveSubjects(updatedSubjects);
+    setSubjects(updatedSubjects);
+    (async () => {
+        const saved = await saveSubjects(updatedSubjects).catch(() => null);
+        if (saved && Array.isArray(saved)) {
+            setSubjects(saved);
+        }
+    })();
         setIsFormVisible(false);
     };
 
@@ -29,18 +74,32 @@ function MainContent() {
         setIsFormVisible(true);
     };
 
-    const markPresent = (index) => {
+    const markPresent = async (index) => {
         const updatedSubjects = [...subjects];
         updatedSubjects[index].present += 1;
         setSubjects(updatedSubjects);
-        saveSubjects(updatedSubjects);
+
+        const id = updatedSubjects[index].id;
+        if (id) {
+            const patched = await patchSubject(id, { present: updatedSubjects[index].present });
+            if (!patched) saveSubjects(updatedSubjects).catch(() => {});
+        } else {
+            saveSubjects(updatedSubjects).catch(() => {});
+        }
     };
 
-    const markAbsent = (index) => {
+    const markAbsent = async (index) => {
         const updatedSubjects = [...subjects];
         updatedSubjects[index].absent += 1;
         setSubjects(updatedSubjects);
-        saveSubjects(updatedSubjects);
+
+        const id = updatedSubjects[index].id;
+        if (id) {
+            const patched = await patchSubject(id, { absent: updatedSubjects[index].absent });
+            if (!patched) saveSubjects(updatedSubjects).catch(() => {});
+        } else {
+            saveSubjects(updatedSubjects).catch(() => {});
+        }
     };
 
     const deleteSubject = (index) => {
@@ -48,6 +107,14 @@ function MainContent() {
         setSubjects(updatedSubjects);
         saveSubjects(updatedSubjects);
     };
+
+    if (!auth.authenticated) {
+        return (
+            <div className="flex flex-col items-center p-5 bg-zinc-800 min-h-screen text-white">
+                <div className="text-xl">Please sign in to manage attendance.</div>
+            </div>
+        );
+    }
 
     return (
         <div className="flex flex-col items-center p-5 bg-zinc-800 min-h-screen">
