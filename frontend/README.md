@@ -46,6 +46,17 @@ npm run dev
 
 4. Open your browser and visit `http://localhost:5173`
 
+### Connecting to the backend
+
+The frontend will try to call a backend API at `http://localhost:8000` by default. To change this, set the `VITE_BACKEND_URL` environment variable before running Vite.
+
+Example (Windows PowerShell):
+
+```powershell
+$env:VITE_BACKEND_URL = 'http://localhost:8000'
+npm run dev
+```
+
 ## Usage
 
 1. Click "Add Subject" to add a new subject
