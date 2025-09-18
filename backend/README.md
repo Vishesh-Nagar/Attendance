@@ -57,10 +57,33 @@ Notes about sessions and CORS:
 - The backend uses Django sessions (cookies). When calling from a different origin (frontend dev server), include `credentials: 'include'` in `fetch` requests and ensure `CORS_ALLOWED_ORIGINS` includes the frontend origin (`http://localhost:5173`).
 - For production, use HTTPS and tighten `ALLOWED_HOSTS`, and consider token-based auth if you prefer stateless APIs.
 
+Database Configuration
+
+- **Local Development**: The app uses SQLite by default (`db.sqlite3`).
+- **External Database**: To use an external SQL database (e.g., MySQL, PostgreSQL), create a `.env` file in the backend directory and set the `DATABASE_URL` environment variable.
+
+  Example for MySQL:
+
+  ```
+  DATABASE_URL=mysql://username:password@host:port/database
+  ```
+
+  Example for PostgreSQL:
+
+  ```
+  DATABASE_URL=postgresql://username:password@host:port/database
+  ```
+
+- After configuring `DATABASE_URL`, run migrations:
+
+  ```bash
+  python manage.py migrate
+  ```
+
 Hosting and external database
 
-- You can host the backend on platforms like Heroku, Render, Railway, or any VPS. If you use a hosted Postgres, set the `DATABASE_URL` environment variable to the provided URI (e.g. `postgres://user:pass@host:5432/dbname`).
-- Make sure `psycopg2-binary` and `dj-database-url` are installed in your environment. The app will use `DATABASE_URL` automatically if present.
+- You can host the backend on platforms like Heroku, Render, Railway, or any VPS. Set the `DATABASE_URL` environment variable to the provided URI (e.g. `postgres://user:pass@host:5432/dbname`).
+- Make sure `psycopg2-binary`, `dj-database-url`, and `python-dotenv` are installed in your environment. The app will use `DATABASE_URL` automatically if present.
 - After deploying and configuring `DATABASE_URL`, run migrations on the host:
 
 ```bash

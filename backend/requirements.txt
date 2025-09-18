@@ -2,3 +2,5 @@ django>=4.0
 django-cors-headers>=3.13.0
 dj-database-url>=1.0.0
 psycopg2-binary>=2.9
+python-dotenv>=1.0.0
+mysqlclient>=2.1.0
