@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 async function hashPassword(password) {
     const msgUint8 = new TextEncoder().encode(password);
@@ -8,10 +9,12 @@ async function hashPassword(password) {
 }
 
 function AuthForm({ mode = "login", onSuccess, onClose }) {
+    const [currentMode, setCurrentMode] = useState(mode);
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState(null);
+    const [showPassword, setShowPassword] = useState(false);
 
     const BACKEND = import.meta.env.VITE_BACKEND_URL || "http://localhost:8000";
 
@@ -20,7 +23,7 @@ function AuthForm({ mode = "login", onSuccess, onClose }) {
         setError(null);
 
         // Validation checks
-        if (mode === "signup" && !email.endsWith("@gmail.com")) {
+        if (currentMode === "signup" && !email.endsWith("@gmail.com")) {
             setError("Email must end with @gmail.com");
             return;
         }
@@ -32,11 +35,11 @@ function AuthForm({ mode = "login", onSuccess, onClose }) {
         try {
             const hashedPassword = await hashPassword(password);
             const url =
-                mode === "signup"
+                currentMode === "signup"
                     ? `${BACKEND}/api/signup/`
                     : `${BACKEND}/api/login/`;
             const body =
-                mode === "signup"
+                currentMode === "signup"
                     ? { email, username, password: hashedPassword }
                     : { username, password: hashedPassword };
 
@@ -65,9 +68,9 @@ function AuthForm({ mode = "login", onSuccess, onClose }) {
                 className="bg-gray-800 text-white p-6 rounded shadow-lg w-auto"
             >
                 <h3 className="text-xl mb-3">
-                    {mode === "signup" ? "Sign up" : "Log in"}
+                    {currentMode === "signup" ? "Sign up" : "Log in"}
                 </h3>
-                {mode === "signup" && (
+                {currentMode === "signup" && (
                     <input
                         className="w-full p-2 mb-2 text-black"
                         placeholder="Email"
@@ -83,20 +86,29 @@ function AuthForm({ mode = "login", onSuccess, onClose }) {
                     onChange={(e) => setUsername(e.target.value)}
                 />
                 <br />
-                <input
-                    className="w-full p-2 mb-2 text-black"
-                    placeholder="Password"
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                />
+                <div className="relative mb-2">
+                    <input
+                        className="w-full p-2 pr-10 text-black"
+                        placeholder="Password"
+                        type={showPassword ? "text" : "password"}
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                    />
+                    <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-600"
+                    >
+                        {showPassword ? <FaEyeSlash /> : <FaEye />}
+                    </button>
+                </div>
                 {error && <div className="text-red-400 mb-2">{error}</div>}
                 <div className="flex justify-center mt-2 gap-2 items-center text-center">
                     <button
                         type="submit"
                         className="px-3 py-1 bg-green-500 rounded"
                     >
-                        {mode === "signup" ? "Sign up" : "Log in"}
+                        {currentMode === "signup" ? "Sign up" : "Log in"}
                     </button>
                     <button
                         type="button"
@@ -105,6 +117,31 @@ function AuthForm({ mode = "login", onSuccess, onClose }) {
                     >
                         Cancel
                     </button>
+                </div>
+                <div className="mt-2 text-center">
+                    {currentMode === "signup" ? (
+                        <p>
+                            Have an account?{" "}
+                            <button
+                                type="button"
+                                onClick={() => setCurrentMode("login")}
+                                className="text-blue-400 underline hover:text-blue-300"
+                            >
+                                Login
+                            </button>
+                        </p>
+                    ) : (
+                        <p>
+                            New here?{" "}
+                            <button
+                                type="button"
+                                onClick={() => setCurrentMode("signup")}
+                                className="text-blue-400 underline hover:text-blue-300"
+                            >
+                                Sign up
+                            </button>
+                        </p>
+                    )}
                 </div>
             </form>
         </div>
